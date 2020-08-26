@@ -1,0 +1,10 @@
+﻿################################################################################
+# This .gitignore file was automatically created by Microsoft(R) Visual Studio.
+################################################################################
+
+/M220N/bin/Debug/netcoreapp3.1
+/M220N/obj
+/M220NTests/bin/Debug/netcoreapp3.1
+/M220NTests/obj
+/Migrator/bin/Debug/netcoreapp3.1
+/Migrator/obj
