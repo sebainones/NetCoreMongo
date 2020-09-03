@@ -46,7 +46,7 @@ namespace M220NLessons
          */
 
         [Test]
-        public void CountMovies()
+        public async Task CountMoviesAsync()
         {
             // This stage finds all movies that have a specific director
             var matchStage = new BsonDocument("$match",
@@ -84,8 +84,8 @@ namespace M220NLessons
                     projectionStage
                 });
 
-            
-            var result = _moviesCollection.Aggregate(pipeline).ToList();
+
+            var result = await _moviesCollection.Aggregate(pipeline).ToListAsync();
             /* Note: we're making a synchronous Aggregate() call.
              * If you want a challenge, change the line above to make an
              * asynchronous call (hint: you'll need to make 2 changes),
