@@ -81,7 +81,7 @@ namespace M220N.Repositories
 
                 //var insertOptions = new MongoInsertOptions { CheckElementNames = false };
 
-                await _usersCollection.InsertOneAsync(user, cancellationToken);
+                await _usersCollection.WithWriteConcern(WriteConcern.WMajority).InsertOneAsync(user, cancellationToken);
 
                 // TODO Ticket: Durable Writes
                 // // To use a more durable Write Concern for this operation, add the 
@@ -149,10 +149,10 @@ namespace M220N.Repositories
                     currentSession.Jwt = user.AuthToken;
                 }
                 else // If the session doesn't exist, allow MongoDB to create a
-                {                    
+                {
                     var update = Builders<Session>.Update.Set("user_id", user.Email).Set("jwt", user.AuthToken);
                     await _sessionsCollection.UpdateOneAsync(sessionFilter, update, isUpsertOptions, cancellationToken);
-                }                
+                }
 
                 storedUser.AuthToken = user.AuthToken;
                 return new UserResponse(storedUser);
@@ -249,14 +249,15 @@ namespace M220N.Repositories
                 UpdateResult updateResult = null;
                 // TODO Ticket: User Preferences
                 // Use the data in "preferences" to update the user's preferences.
-                //
-                // updateResult = await _usersCollection.UpdateOneAsync(
-                //    new BsonDocument(),
-                //    Builders<User>.Update.Set("TODO", preferences),
-                //    /* Be sure to pass a new UpdateOptions object here,
-                //       setting IsUpsert to false! */
-                //    new UpdateOptions(),
-                //    cancellationToken);
+
+                var filter = Builders<User>.Filter.Eq(u => u.Email, email);
+                
+                updateResult = await _usersCollection.UpdateOneAsync(
+                    filter,
+                    Builders<User>.Update.Set(u => u.Preferences, preferences),
+                    /* Be sure to pass a new UpdateOptions object here, setting IsUpsert to false! */
+                    new UpdateOptions() { IsUpsert = false },
+                cancellationToken);
 
                 return updateResult.MatchedCount == 0
                     ? new UserResponse(false, "No user found with that email")
