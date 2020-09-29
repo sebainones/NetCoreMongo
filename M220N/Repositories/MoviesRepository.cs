@@ -87,11 +87,15 @@ namespace M220N.Repositories
                 return await _moviesCollection.Aggregate()
                     .Match(Builders<Movie>.Filter.Eq(x => x.Id, movieId))
                     // Ticket: Get Comments
-                    // Add a lookup stage that includes the
-                    // comments associated with the retrieved movie
+                    // Add a lookup stage that includes the comments associated with the retrieved movie
+                    .Lookup(
+                    _commentsCollection,
+                    m => m.Id,
+                    c => c.MovieId,
+                    (Movie m) => m.Comments
+                    )
                     .FirstOrDefaultAsync(cancellationToken);
             }
-
             catch (Exception ex)
             {
                 // TODO Ticket: Error Handling
@@ -102,6 +106,7 @@ namespace M220N.Repositories
                 throw;
             }
         }
+
 
         /// <summary>
         ///     For a given a country, return all the movies that match that country.
@@ -261,7 +266,7 @@ namespace M220N.Repositories
                 sortStage,
                 // add the remaining stages in the correct order,                
                 skipStage,
-                limitStage,                
+                limitStage,
                 facetStage
             };
 
