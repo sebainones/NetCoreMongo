@@ -79,9 +79,7 @@ namespace M220N.Repositories
             // comment owner can update the comment!
 
             var filter = Builders<Comment>.Filter.Where(c => c.Email == user.Email && c.Id == commentId);
-            var updateDefinition = Builders<Comment>.Update.Set(c => c.Text, comment).Set(c => c.Date, DateTime.UtcNow),
-
-
+            var updateDefinition = Builders<Comment>.Update.Set(c => c.Text, comment).Set(c => c.Date, DateTime.UtcNow);
 
             return await _commentsCollection.UpdateOneAsync(
                 filter,                
