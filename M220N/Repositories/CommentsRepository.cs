@@ -136,15 +136,13 @@ namespace M220N.Repositories
                 // the Group, Sort, Limit, and Project methods of the Aggregation pipeline.
                 //
 
-                ProjectionDefinition<ReportProjection> projection = Builders<ReportProjection>.Projection.Include(x => x.Id).Include(x => x.Count);
-
                 result = await _commentsCollection
                   .WithReadConcern(new ReadConcern(ReadConcernLevel.Majority))
                   .Aggregate()
                   .Group(new BsonDocument { { "_id", "$email" }, { "count", new BsonDocument("$sum", 1) } }).As<ReportProjection>()
                   .SortByDescending<ReportProjection>(rp => rp.Count) //                  //.Sort(new BsonDocument("count", -1))
                   .Limit(20)
-                  //.Project(projection)     //new BsonDocument { { "_id", 1 }, { "count", 1 } 
+                  //.Project<ReportProjection>(Builders<BsonDocument>.Projection.Include("email").Include("count"))  -->From the MongoDb Course            
                   .ToListAsync();
 
                 return new TopCommentsProjection(result);
