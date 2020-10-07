@@ -20,6 +20,9 @@ namespace M220N.Repositories
 
                 return new MongoClient(mongoClientSettings);
                 //return new MongoClient(uri);
+                //_client = new MongoClient(Constants.MongoDbConnectionUriWithMaxPoolSize).WithWriteConcern(
+                //new WriteConcern(wTimeout: TimeSpan.FromMilliseconds(2500))) as MongoClient;
+
             });
             servicesBuilder.AddSingleton<MoviesRepository>();
             servicesBuilder.AddSingleton<UsersRepository>();

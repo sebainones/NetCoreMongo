@@ -96,13 +96,16 @@ namespace M220N.Repositories
                     )
                     .FirstOrDefaultAsync(cancellationToken);
             }
+            // TODO Ticket: Error Handling
+            // Catch the exception and check the exception type and message contents.
+            // Return null if the exception is due to a bad/missing Id. Otherwise,              
+            // throw.
+            catch (FormatException)
+            {
+                return null;
+            }
             catch (Exception ex)
             {
-                // TODO Ticket: Error Handling
-                // Catch the exception and check the exception type and message contents.
-                // Return null if the exception is due to a bad/missing Id. Otherwise,
-                // throw.
-
                 throw;
             }
         }
